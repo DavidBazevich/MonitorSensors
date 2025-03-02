@@ -6,13 +6,14 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "sensorType")
-public class SensorType {
+@Table(name = "units")
+public class Units {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    private String type;
-    @OneToMany(mappedBy = "type")
+    private String unit;
+    @OneToMany(mappedBy = "unit")
     private List<Sensors> sensorsList;
+
 }
