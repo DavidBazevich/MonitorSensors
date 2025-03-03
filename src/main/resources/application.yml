@@ -5,8 +5,8 @@ spring:
     password: 8080
     driver-class-name: org.postgresql.Driver
   jpa:
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     properties.hibernate:
         show_sql: true
         format_sql: true
+        hbm2ddl.auto: validate
+    open-in-view: false
