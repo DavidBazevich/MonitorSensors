@@ -3,12 +3,12 @@ package org.senla.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"id", "unit", "type", "range"})
+@ToString(exclude = {"unit", "type", "range"})
 @EqualsAndHashCode(of = "name")
+@Entity
 @Table(name = "sensor")
 public class Sensor {
     @Id
@@ -16,7 +16,7 @@ public class Sensor {
     private Integer id;
     private String name;
     private String model;
-    private Range range; //TODO надо с json разобраться
+    private Range range;
     @ManyToOne(fetch = FetchType.LAZY)
     private Type type;
     @ManyToOne(fetch = FetchType.LAZY)

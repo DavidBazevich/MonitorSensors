@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.senla.entity.Range;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SensorDto{
-    private Integer id;
+public class SensorCreateDto {
     @Size(min = 3)
     private String name;
     private String model;
@@ -21,5 +21,4 @@ public class SensorDto{
     private String unit;
     private String location;
     private String description;
-
 }
