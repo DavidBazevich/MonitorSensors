@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS sensor(
     model VARCHAR(15) NOT NULL,
     range_from INT NOT NULL,
     range_to INT NOT NULL,
-    type_id INT REFERENCES type(id),
+    type_id INT  REFERENCES type(id) NOT NULL,
     unit_id INT REFERENCES unit(id),
     location VARCHAR(40),
     description VARCHAR(200)

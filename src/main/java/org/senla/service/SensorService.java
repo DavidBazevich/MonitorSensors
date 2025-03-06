@@ -2,21 +2,32 @@ package org.senla.service;
 
 import lombok.RequiredArgsConstructor;
 
-import org.senla.dto.SensorCreateDto;
+import org.senla.dto.creators.SensorCreateDto;
 import org.senla.dto.SensorDto;
 import org.senla.dto.mapper.SensorMapper;
+import org.senla.entity.Range;
+import org.senla.entity.Sensor;
+import org.senla.entity.Type;
+import org.senla.entity.Units;
 import org.senla.exception.ResourceNotFoundException;
 import org.senla.repository.SensorsRepository;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.senla.repository.TypeRepository;
+import org.senla.repository.UnitRepository;
+import org.senla.service.Impl.SensorServiceImp;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SensorService implements SensorServiceImp{
+@Transactional(readOnly = true)
+public class SensorService implements SensorServiceImp {
 
     private final SensorsRepository sensorsRepository;
+    private final TypeRepository typeRepository;
+    private final UnitRepository unitRepository;
     private final SensorMapper sensorMapper;
 
     @Override
@@ -28,13 +39,12 @@ public class SensorService implements SensorServiceImp{
     }
 
     @Override
-    public SensorDto saveSensor(SensorCreateDto sensorCreatedDto) { //TODO как обрабатывать исключение
-        try {
-            sensorsRepository.save(sensorMapper.toSensor(sensorCreatedDto));
-            return sensorMapper.toSensorDto(sensorCreatedDto);
-        } catch (InvalidDataAccessApiUsageException e){
-            return null;
-        }
+    @Transactional
+    public SensorDto saveSensor(SensorCreateDto sensorCreatedDto) {
+       return Optional.of(createSensor(sensorCreatedDto))
+               .map(sensorsRepository::save)
+               .map(sensorMapper::toSensorDto)
+               .orElseThrow(() -> new ResourceNotFoundException("Incorrect data"));
     }
 
     @Override
@@ -44,12 +54,34 @@ public class SensorService implements SensorServiceImp{
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with id: " + id));
     }
 
+
     @Override
-    public void deleteSensorById(Integer id) {
-        if (!sensorsRepository.existsById(id)){
-            throw new ResourceNotFoundException("Sensor not found with id: " + id); //TODO как правильно обрабатывать
-        }
+    @Transactional
+    public SensorDto deleteSensorById(Integer id) {
+        Sensor sensor = sensorsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with id: " + id));
         sensorsRepository.deleteById(id);
+        return sensorMapper.toSensorDto(sensor);
+    }
+
+    private Sensor createSensor(SensorCreateDto sensorCreateDto) {
+        Units unit = null;
+        Type type = typeRepository.findByName(sensorCreateDto.getType())
+                .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + sensorCreateDto.getType()));
+        if(sensorCreateDto.getUnit() != null){
+            unit = unitRepository.findByName(sensorCreateDto.getUnit())
+                    .orElseThrow(() -> new ResourceNotFoundException("Unit not found with name: " + sensorCreateDto.getUnit()));
+        }
+        return Sensor.builder()
+                .name(sensorCreateDto.getName())
+                .model(sensorCreateDto.getModel())
+                .range(new Range(sensorCreateDto.getRange().getRange_from(),
+                        sensorCreateDto.getRange().getRange_to()))
+                .type(type)
+                .unit(unit)
+                .location(sensorCreateDto.getLocation())
+                .description(sensorCreateDto.getDescription())
+                .build();
     }
 
 

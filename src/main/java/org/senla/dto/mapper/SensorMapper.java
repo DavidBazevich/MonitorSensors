@@ -3,7 +3,7 @@ package org.senla.dto.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.senla.dto.SensorCreateDto;
+import org.senla.dto.creators.SensorCreateDto;
 import org.senla.dto.SensorDto;
 import org.senla.entity.Sensor;
 

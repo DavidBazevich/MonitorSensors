@@ -2,10 +2,10 @@ package org.senla.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.senla.dto.SensorCreateDto;
+import org.senla.dto.creators.SensorCreateDto;
 import org.senla.dto.SensorDto;
 
-import org.senla.service.SensorServiceImp;
+import org.senla.service.Impl.SensorServiceImp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +25,8 @@ public class SensorController {
        return new ResponseEntity<>(sensorService.findById(id), HttpStatus.OK);
     }
 
+    //ToDO putMapping
+
     @GetMapping
     public ResponseEntity<List<SensorDto>> findAllSensor(){
         return new ResponseEntity<>(sensorService.findAllSensor(), HttpStatus.OK);
@@ -38,7 +40,7 @@ public class SensorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSensor(@PathVariable Integer id){
         sensorService.deleteSensorById(id);
-        return ResponseEntity.noContent().build(); //TODO не работает noContent
+        return ResponseEntity.noContent().build();
     }
 
 }

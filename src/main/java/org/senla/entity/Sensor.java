@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString(exclude = {"unit", "type", "range"})
 @EqualsAndHashCode(of = "name")
+@Builder
 @Entity
 @Table(name = "sensor")
 public class Sensor {

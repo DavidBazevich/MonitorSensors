@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "unit")
+@Table(name = "unit") //TODO controller
 public class Units {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
