@@ -8,6 +8,7 @@ import org.senla.dto.SensorDto;
 import org.senla.service.Impl.SensorServiceImp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,15 +26,13 @@ public class SensorController {
        return new ResponseEntity<>(sensorService.findById(id), HttpStatus.OK);
     }
 
-    //ToDO putMapping
-
     @GetMapping
     public ResponseEntity<List<SensorDto>> findAllSensor(){
         return new ResponseEntity<>(sensorService.findAllSensor(), HttpStatus.OK);
     }
 
-    @PostMapping("save")
-    public ResponseEntity<SensorDto> addSensor(@RequestBody SensorCreateDto sensor){
+    @PostMapping("/save")
+    public ResponseEntity<SensorDto> addSensor(@RequestBody  @Validated SensorCreateDto sensor){
         return new ResponseEntity<>(sensorService.saveSensor(sensor), HttpStatus.CREATED);
     }
 

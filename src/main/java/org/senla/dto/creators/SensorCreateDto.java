@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.senla.entity.Range;
+import org.senla.validation.RangeVal;
 
 
 @Data
@@ -17,7 +18,8 @@ public class SensorCreateDto {
     private String name;
     @Size(max = 15)
     private String model;
-    private Range range; //TODO Validate
+    @RangeVal
+    private Range range;
     private String type;
     private String unit;
     @Size(max = 40)

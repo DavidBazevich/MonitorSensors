@@ -34,9 +34,9 @@ public class TypeController {
         return new ResponseEntity<>(typeService.saveType(type), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteType(@PathVariable Integer id){
-        typeService.deleteTypeById(id);
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteType(@PathVariable String name){
+        typeService.deleteTypeByName(name);
         return ResponseEntity.noContent().build();
     }
 

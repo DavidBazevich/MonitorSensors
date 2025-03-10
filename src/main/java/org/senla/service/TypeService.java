@@ -49,9 +49,9 @@ public class TypeService implements TypeServiceImp {
 
     @Override
     @Transactional
-    public TypeDto deleteTypeById(Integer id) {
-        Type type = typeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Type not found with id: " + id));
+    public TypeDto deleteTypeByName(String name) {
+        Type type = typeRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + name));
         typeRepository.delete(type);
         return typeMapper.toTypeDto(type);
     }

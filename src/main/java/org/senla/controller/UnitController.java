@@ -29,14 +29,20 @@ public class UnitController {
         return ResponseEntity.ok(unitService.findAllUnits());
     }
 
-    @PostMapping("save")
+    @PostMapping("/save")
     public ResponseEntity<UnitDto> addUnit(@RequestBody UnitCreateDto unit){
         return new ResponseEntity<>(unitService.saveUnit(unit), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUnit(@PathVariable Integer id){
-        unitService.deleteUnitById(id);
+    @PutMapping("/{name}")
+    public ResponseEntity<UnitDto> updateUnit(@PathVariable String name,
+                                              @RequestBody UnitCreateDto newUnit){
+       return ResponseEntity.ok(unitService.updateUnit(name, newUnit));
+    }
+
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteUnit(@PathVariable String name){
+        unitService.deleteUnitByName(name);
         return ResponseEntity.noContent().build();
     }
 

@@ -8,6 +8,7 @@ import java.util.List;
 public interface UnitServiceImp {
     List<UnitDto> findAllUnits();
     UnitDto saveUnit(UnitCreateDto type);
+    UnitDto updateUnit(String name, UnitCreateDto newUnit);
     UnitDto findById(Integer id);
-    UnitDto deleteUnitById(Integer id);
+    UnitDto deleteUnitByName(String name);
 }

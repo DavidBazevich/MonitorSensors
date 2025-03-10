@@ -9,5 +9,5 @@ public interface TypeServiceImp {
     List<TypeDto> findAllTypes();
     TypeDto saveType(TypeCreateDto type);
     TypeDto findById(Integer id);
-    TypeDto deleteTypeById(Integer id);
+    TypeDto deleteTypeByName(String name);
 }
