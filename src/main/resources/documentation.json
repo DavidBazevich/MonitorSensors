@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "OpenAPI definition",
     "version": "v0"
@@ -11,6 +11,66 @@
     }
   ],
   "paths": {
+    "/api/v1/unit/save": {
+      "post": {
+        "tags": [
+          "unit-controller"
+        ],
+        "operationId": "addUnit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnitCreateDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/type/save": {
+      "post": {
+        "tags": [
+          "type-controller"
+        ],
+        "operationId": "addType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeCreateDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/save": {
       "post": {
         "tags": [
@@ -117,10 +177,204 @@
           }
         }
       }
+    },
+    "/api/v1/unit": {
+      "get": {
+        "tags": [
+          "unit-controller"
+        ],
+        "operationId": "findAllUnits",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UnitDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/unit/{id}": {
+      "get": {
+        "tags": [
+          "unit-controller"
+        ],
+        "summary": "Find by id",
+        "operationId": "findById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "unit-controller"
+        ],
+        "operationId": "deleteUnit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/type": {
+      "get": {
+        "tags": [
+          "type-controller"
+        ],
+        "operationId": "findAllTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TypeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/type/{id}": {
+      "get": {
+        "tags": [
+          "type-controller"
+        ],
+        "summary": "Find by id",
+        "operationId": "findById_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "type-controller"
+        ],
+        "operationId": "deleteType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "UnitCreateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "UnitDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "TypeCreateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "TypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "Range": {
         "type": "object",
         "properties": {
@@ -138,12 +392,14 @@
         "type": "object",
         "properties": {
           "name": {
-            "maxLength": 2147483647,
-            "minLength": 3,
-            "type": "string"
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 3
           },
           "model": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 15,
+            "minLength": 0
           },
           "range": {
             "$ref": "#/components/schemas/Range"
@@ -155,10 +411,14 @@
             "type": "string"
           },
           "location": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 0
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0
           }
         }
       },
@@ -170,9 +430,9 @@
             "format": "int32"
           },
           "name": {
+            "type": "string",
             "maxLength": 2147483647,
-            "minLength": 3,
-            "type": "string"
+            "minLength": 3
           },
           "model": {
             "type": "string"
