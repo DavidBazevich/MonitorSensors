@@ -15,8 +15,12 @@ import java.util.Map;
 
 @Component
 public class JwtService {
-    @Value("${jwt.secretkey}")
+    @Value("${jwt.secret-key}")
     private String SECRET_KEY;
+    @Value("$jwt.expiration")
+    private long jwtExpiration;
+    @Value("$jwt.refresh-token.expiration")
+    private long refreshExpiration;
 
     private SecretKey getSigningKey(){
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
@@ -41,15 +45,19 @@ public class JwtService {
 
     public String generateToken(User user){
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, user.getName());
+        return createToken(claims, user.getName(), jwtExpiration);
     }
 
-    private String createToken(Map<String, Object> claims, String username){
+    public String generateRefreshToken(User user){
+        return createToken(new HashMap<>(), user.getName(), refreshExpiration);
+    }
+
+    private String createToken(Map<String, Object> claims, String username, long expiration){
         return Jwts.builder()
                 .claims(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
                 .compact();
     }

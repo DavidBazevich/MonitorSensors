@@ -3,11 +3,13 @@ package org.senla.dto;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.validation.annotation.Validated;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Validated
 public class AuthRequest {
     @UniqueElements
     private String name;

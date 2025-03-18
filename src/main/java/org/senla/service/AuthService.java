@@ -1,5 +1,8 @@
 package org.senla.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.senla.dto.AuthRequest;
 import org.senla.dto.AuthResponse;
@@ -12,11 +15,13 @@ import org.senla.repository.RoleRepository;
 import org.senla.repository.TokenRepository;
 import org.senla.repository.UserRepository;
 import org.senla.service.Impl.AuthServiceImpl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -43,10 +48,12 @@ public class AuthService implements AuthServiceImpl {
                 .build();
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(savedUser, jwtToken);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -80,9 +87,37 @@ public class AuthService implements AuthServiceImpl {
         var user = userRepository.findByName(request.getName())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String username;
+        final String refreshToken;
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+            return;
+        }
+        refreshToken = authorizationHeader.substring(7);
+        username = jwtService.extractUsername(refreshToken);
+        if (username != null){
+            var user = this.userRepository.findByName(username)
+                    .orElseThrow();
+            if (jwtService.isTokenValid(refreshToken, user.getUsername())){
+               var accessToken = jwtService.generateToken(user);
+               revokeAllUserTokens(user);
+               saveUserToken(user, accessToken);
+               var authResponse = AuthResponse.builder()
+                       .accessToken(accessToken)
+                       .refreshToken(refreshToken)
+                       .build();
+               new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
     }
 
 }

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS token(
     token VARCHAR(256),
     createdAt TIMESTAMP,
     expiresAt TIMESTAMP,
-    validatedAt TIMESTAMP,
+    validatedAt TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS users_roles(
