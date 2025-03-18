@@ -1,8 +1,10 @@
 package org.senla.service.Impl;
 
-import org.senla.dto.RegisterDto;
-import org.senla.dto.RegisterResponse;
+import org.senla.dto.AuthRequest;
+import org.senla.dto.AuthResponse;
+import org.senla.dto.RegisterRequest;
 
 public interface AuthServiceImpl {
-    RegisterResponse register(RegisterDto registerDto);
+    AuthResponse register(RegisterRequest request);
+    AuthResponse authenticate(AuthRequest request);
 }

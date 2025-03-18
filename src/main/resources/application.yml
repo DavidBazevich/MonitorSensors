@@ -8,8 +8,10 @@ spring:
     properties.hibernate:
         show_sql: true
         format_sql: true
-        hbm2ddl.auto: validate
+        hbm2ddl.auto: update
     open-in-view: false
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+jwt:
+  secretkey: 977edd3d588ad6fa15c9a6396e8a1e5136ebc9eeead755557efb1048c5e3aa3e

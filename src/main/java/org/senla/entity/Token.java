@@ -1,10 +1,7 @@
 package org.senla.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -12,13 +9,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
-public class Role{
+public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
-    @ManyToMany(mappedBy = "roles")
-    private List<User> users;
-
+    private String token;
+    private boolean expired;
+    private boolean revoked;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

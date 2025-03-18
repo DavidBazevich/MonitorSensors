@@ -13,7 +13,7 @@ public class RangeValidator implements ConstraintValidator<RangeVal, Range> {
         Integer to = range.getRange_to();
         if (from != null && to != null
                 && from < to
-                && from > 0){ //TODO Validate
+                && from > 0){
             return true;
         }
         return false;
