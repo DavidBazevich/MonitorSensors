@@ -6,20 +6,20 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.senla.entity.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Service
 public class JwtService {
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
-    @Value("$jwt.expiration")
+    @Value("${jwt.expiration}")
     private long jwtExpiration;
-    @Value("$jwt.refresh-token.expiration")
+    @Value("${jwt.refresh-token.expiration}")
     private long refreshExpiration;
 
     private SecretKey getSigningKey(){

@@ -12,7 +12,7 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
         SELECT token FROM Token token INNER JOIN User user ON token.user.id = user.id
         WHERE user.id = :userId AND (token.expired = false OR token.revoked = false)
     """)
-    List<Token> findAllValidTokensByUser(Integer id);
+    List<Token> findAllValidTokensByUser(Integer userId);
 
     Optional<Token> findByToken(String token);
 }

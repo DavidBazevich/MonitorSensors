@@ -2,12 +2,9 @@ package org.senla.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.senla.filter.JWTFilter;
-import org.senla.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,14 +19,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static org.senla.entity.Role.ADMIN;
+import static org.senla.entity.Role.VIEWER;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     private final JWTFilter jwtFilter;
-    private final UserService userService;
     private final LogoutHandler logoutHandler;
 
     @Bean
@@ -38,15 +37,15 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui").permitAll()
-                        .requestMatchers("/api/v1/").hasAnyRole("VIEWER", "ADMIN")
+                        .requestMatchers("/v3/api-docs/**", "swagger-ui/**").permitAll()
+                        .requestMatchers( "/api/v1/type", "/api/v1/unit").hasRole(ADMIN.name())
+                        .requestMatchers("/api/v1/sensor").hasAnyRole(ADMIN.name(), VIEWER.name())
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest()
+                        .anyRequest()                         //todo Tests
                         .authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutUrl("/api/v1/auth/logout")
@@ -59,14 +58,6 @@ public class SecurityConfiguration {
                 )
                 .build();
     }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    } //todo try delete been
 
     @Bean
     public PasswordEncoder passwordEncoder(){

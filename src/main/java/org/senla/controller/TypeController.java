@@ -1,6 +1,7 @@
 package org.senla.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.senla.dto.TypeDto;
 import org.senla.dto.creators.TypeCreateDto;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/type")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class TypeController {
 
     private final TypeServiceImp typeService;

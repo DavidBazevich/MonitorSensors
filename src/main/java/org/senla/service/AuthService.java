@@ -7,11 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.senla.dto.AuthRequest;
 import org.senla.dto.AuthResponse;
 import org.senla.dto.RegisterRequest;
-import org.senla.entity.Role;
 import org.senla.entity.Token;
 import org.senla.entity.User;
 import org.senla.filter.JwtService;
-import org.senla.repository.RoleRepository;
 import org.senla.repository.TokenRepository;
 import org.senla.repository.UserRepository;
 import org.senla.service.Impl.AuthServiceImpl;
@@ -22,14 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService implements AuthServiceImpl {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -37,14 +33,10 @@ public class AuthService implements AuthServiceImpl {
 
     @Override
     public AuthResponse register(RegisterRequest registerRequest) {
-        Role role = roleRepository.findByName("VIEWER")
-                .orElseThrow(() -> new IllegalStateException("ROLE VIEWER was not initiated"));
         var user = User.builder()
                 .name(registerRequest.getName())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .accountLocked(false)
-                .enabled(false)
-                .roles(List.of(role))
+                .role(registerRequest.getRole())
                 .build();
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -88,6 +80,8 @@ public class AuthService implements AuthServiceImpl {
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

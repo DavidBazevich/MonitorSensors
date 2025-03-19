@@ -1,6 +1,7 @@
 package org.senla.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.senla.dto.UnitDto;
 import org.senla.dto.creators.UnitCreateDto;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/unit")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class UnitController {
 
     private final UnitServiceImp unitService;

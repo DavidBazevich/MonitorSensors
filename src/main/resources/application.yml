@@ -10,10 +10,6 @@ spring:
         format_sql: true
         hbm2ddl.auto: update
     open-in-view: false
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-
 
 jwt:
   secret-key: 977edd3d588ad6fa15c9a6396e8a1e5136ebc9eeead755557efb1048c5e3aa3e

@@ -2,7 +2,6 @@ package org.senla.dto;
 
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.validation.annotation.Validated;
 
 @Data
@@ -11,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 @Validated
 public class AuthRequest {
-    @UniqueElements
     private String name;
     @Size(min = 8)
     @EqualsAndHashCode.Exclude
