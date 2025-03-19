@@ -39,6 +39,12 @@ public class SensorController {
         return new ResponseEntity<>(sensorService.saveSensor(sensor), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{name}")
+    public ResponseEntity<SensorDto> updateSensor(@PathVariable String name,
+                                              @RequestBody SensorCreateDto newSensor){
+        return ResponseEntity.ok(sensorService.updateSensor(name, newSensor));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")
     public ResponseEntity<Void> deleteSensor(@PathVariable Integer id){

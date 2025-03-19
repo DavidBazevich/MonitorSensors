@@ -8,6 +8,7 @@ import java.util.List;
 public interface SensorServiceImp {
     List<SensorDto> findAllSensor();
     SensorDto saveSensor(SensorCreateDto sensor);
+    SensorDto updateSensor(String name, SensorCreateDto sensor);
     SensorDto findById(Integer id);
     SensorDto deleteSensorById(Integer id);
 }

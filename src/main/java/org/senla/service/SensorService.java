@@ -48,6 +48,29 @@ public class SensorService implements SensorServiceImp {
     }
 
     @Override
+    @Transactional
+    public SensorDto updateSensor(String name, SensorCreateDto newSensor){
+        Units unit = null;
+        Type type = typeRepository.findByName(newSensor.getType())
+                .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + newSensor.getType()));
+        if(newSensor.getUnit() != null){
+            unit = unitRepository.findByName(newSensor.getUnit())
+                    .orElseThrow(() -> new ResourceNotFoundException("Unit not found with name: " + newSensor.getUnit()));
+        }
+        Sensor sensor = sensorsRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with name: " + name));
+        sensor.setName(newSensor.getName());
+        sensor.setModel(newSensor.getModel());
+        sensor.setRange(newSensor.getRange());
+        sensor.setType(type);
+        sensor.setUnit(unit);
+        sensor.setLocation(newSensor.getLocation());
+        sensor.setDescription(newSensor.getDescription());
+        sensorsRepository.save(sensor);
+        return sensorMapper.toSensorDto(sensor);
+    }
+
+    @Override
     public SensorDto findById(Integer id) {
         return sensorsRepository.findById(id)
                 .map(sensorMapper::toSensorDto)

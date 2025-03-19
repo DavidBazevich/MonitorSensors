@@ -1,8 +1,8 @@
 package org.senla.service;
 
 import lombok.AllArgsConstructor;
-import org.senla.dto.creators.TypeCreateDto;
 import org.senla.dto.TypeDto;
+import org.senla.dto.creators.TypeCreateDto;
 import org.senla.dto.mapper.TypeMapper;
 import org.senla.entity.Type;
 import org.senla.exception.ResourceNotFoundException;
@@ -38,6 +38,16 @@ public class TypeService implements TypeServiceImp {
                 .map(typeRepository::save)
                 .map(typeMapper::toTypeDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Incorrect data"));
+    }
+
+    @Override
+    @Transactional
+    public TypeDto updateType(String name, TypeCreateDto newType){
+        Type type = typeRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + name));
+        type.setName(newType.getName());
+        typeRepository.save(type);
+        return typeMapper.toTypeDto(type);
     }
 
     @Override
