@@ -12,4 +12,4 @@ INSERT INTO unit(name) VALUES ('bar');
 INSERT INTO unit(name) VALUES ('voltage');
 INSERT INTO unit(name) VALUES ('degree Celsius');
 INSERT INTO unit(name) VALUES ('percent');
---rollback DELETE FROM type;
+--rollback DELETE FROM unit;

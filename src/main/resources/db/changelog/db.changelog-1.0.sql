@@ -28,6 +28,25 @@ CREATE TABLE IF NOT EXISTS sensor(
 );
 --rollback DROP TABLE sensor;
 
+--changeset david:4
+CREATE TABLE IF NOT EXISTS users
+(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(40) NOT NULL,
+    password VARCHAR(128) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    create_date TIMESTAMP NOT NULL ,
+    last_modified_date TIMESTAMP
+);
+--rollback DROP TABLE users;
 
-
-
+--changeset david:5
+CREATE TABLE IF NOT EXISTS token
+(
+    id SERIAL PRIMARY KEY,
+    token VARCHAR(256),
+    expired BOOLEAN NOT NULL,
+    revoked BOOLEAN NOT NULL,
+    user_id INT NOT NULL REFERENCES users(id)
+);
+--rollback DROP TABLE token;
