@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/v3/api-docs/**", "swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers( "/api/v1/type", "/api/v1/unit").hasRole(ADMIN.name())
                         .requestMatchers("/api/v1/sensor").hasAnyRole(ADMIN.name(), VIEWER.name())
                         .requestMatchers("/api/v1/auth/**").permitAll()
