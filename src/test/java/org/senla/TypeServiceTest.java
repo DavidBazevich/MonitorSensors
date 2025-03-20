@@ -1,5 +1,7 @@
 package org.senla;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,14 +11,15 @@ import org.senla.dto.TypeDto;
 import org.senla.dto.creators.TypeCreateDto;
 import org.senla.dto.mapper.TypeMapper;
 import org.senla.entity.Type;
+import org.senla.exception.ResourceNotFoundException;
 import org.senla.repository.TypeRepository;
 import org.senla.service.TypeService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,99 +33,118 @@ public class TypeServiceTest {  //TODO add integration and unit tests, Docker Co
     @InjectMocks
     private TypeService typeService;
 
-    @Test
-    void saveTypeTest() {
-        when(typeMapper.toType(getTypeCreateDto())).thenReturn(getType());
-        when(typeRepository.save(getType())).thenReturn(getType());
-        when(typeMapper.toTypeDto(getType())).thenReturn(getTypeDto());
+    private Type type;
+    private TypeDto typeDto;
+    private TypeCreateDto typeCreateDto;
 
-        TypeDto result = typeService.saveType(getTypeCreateDto());
-        assertEquals(getTypeDto(), result);
+    @BeforeEach
+    void setUp() {
+        type = new Type();
+        type.setId(1);
+        type.setName("Pressure");
+
+        typeDto = new TypeDto(1, "Pressure");
+
+        typeCreateDto = new TypeCreateDto("Pressure");
     }
 
     @Test
-    void saveTypeTest_ThrowsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> {
-            typeService.saveType(getTypeCreateDto());
-        });
+    void findAllTypes() {
+        when(typeRepository.findAll()).thenReturn(Collections.singletonList(type));
+        when(typeMapper.toTypeDto(type)).thenReturn(typeDto);
+
+        List<TypeDto> result = typeService.findAllTypes();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(typeDto, result.get(0));
+
+        verify(typeRepository, times(1)).findAll();
+        verify(typeMapper, times(1)).toTypeDto(type);
     }
 
     @Test
-    void updateTypeTest() {  // FAIL
-        int id = 1;
-        Type type = Type.builder()
-                .id(1)
-                .name("Voltage")
-                .build();
-        TypeCreateDto newType = new TypeCreateDto("Voltage");
-        when(typeRepository.findById(id)).thenReturn(Optional.ofNullable(getType()));
+    void saveType() {
+        when(typeMapper.toType(typeCreateDto)).thenReturn(type);
         when(typeRepository.save(type)).thenReturn(type);
-        when(typeMapper.toTypeDto(getType())).thenReturn(getTypeDto());
+        when(typeMapper.toTypeDto(type)).thenReturn(typeDto);
 
+        TypeDto result = typeService.saveType(typeCreateDto);
 
-        TypeDto result = typeService.updateType(id, newType);
-        assertEquals(TypeDto.builder().id(1).name("Voltage").build(), result);
+        assertNotNull(result);
+        assertEquals(typeDto, result);
+
+        verify(typeMapper, times(1)).toType(typeCreateDto);
+        verify(typeRepository, times(1)).save(type);
+        verify(typeMapper, times(1)).toTypeDto(type);
     }
 
     @Test
-    void findTypeByIdTest() {
-        int id = 1;
-        when(typeMapper.toTypeDto(getType())).thenReturn(getTypeDto());
-        when(typeRepository.findById(id)).thenReturn(Optional.ofNullable(getType()));
+    void updateType() {
+        when(typeRepository.findById(1)).thenReturn(Optional.of(type));
+        when(typeRepository.save(type)).thenReturn(type);
+        when(typeMapper.toTypeDto(type)).thenReturn(typeDto);
 
-        TypeDto result = typeService.findById(id);
-        assertEquals(result, getTypeDto());
+        TypeDto result = typeService.updateType(1, typeCreateDto);
+
+        assertNotNull(result);
+        assertEquals(typeDto, result);
+
+        verify(typeRepository, times(1)).findById(1);
+        verify(typeRepository, times(1)).save(type);
+        verify(typeMapper, times(1)).toTypeDto(type);
     }
 
     @Test
-    void findAllTypesTest() {  //FAIL
-        when(typeMapper.toTypeDto(getType())).thenReturn(getTypeDto());
-        when(typeRepository.findAll()).thenReturn(getTypeList());
+    void findById() {
+        when(typeRepository.findById(1)).thenReturn(Optional.of(type));
+        when(typeMapper.toTypeDto(type)).thenReturn(typeDto);
 
-        var result = typeService.findAllTypes();
-        assertEquals(getTypeDtoList(), result);
+        TypeDto result = typeService.findById(1);
+
+        assertNotNull(result);
+        assertEquals(typeDto, result);
+
+        verify(typeRepository, times(1)).findById(1);
+        verify(typeMapper, times(1)).toTypeDto(type);
     }
 
     @Test
-    void deleteTypeByIdTest() { //Работает но при смене id на другую цифру тоже самое срабатывает
-        int id = 1;
-        when(typeRepository.findById(id)).thenReturn(Optional.ofNullable(getType()));
+    void deleteTypeById() {
+        when(typeRepository.findById(1)).thenReturn(Optional.of(type));
 
-        typeService.deleteTypeById(id);
+        typeService.deleteTypeById(1);
 
-        verify(typeRepository, times(1)).findById(id);
-        verify(typeRepository, times(1)).delete(getType());
+        verify(typeRepository, times(1)).findById(1);
+        verify(typeRepository, times(1)).delete(type);
     }
 
-    private TypeCreateDto getTypeCreateDto() {
-        return new TypeCreateDto("Pressure");
-    }
+    @Nested
+    class TypeResourceNotFoundExceptionTests{
+        @Test
+        void updateType() {
+            when(typeRepository.findById(1)).thenReturn(Optional.empty());
 
-    private Type getType() {
-        return Type.builder()
-                .id(1)
-                .name("Pressure")
-                .build();
-    }
+            assertThrows(ResourceNotFoundException.class, () -> typeService.updateType(1, typeCreateDto));
 
-    private TypeDto getTypeDto() {
-        return new TypeDto(1, "Pressure");
-    }
+            verify(typeRepository, times(1)).findById(1);
+        }
 
-    private List<Type> getTypeList() {
-        return List.of(
-                Type.builder().id(1).name("Pressure").build(),
-                Type.builder().id(2).name("Voltage").build(),
-                Type.builder().id(3).name("Temperature").build()
-        );
-    }
+        @Test
+        void findById() {
+            when(typeRepository.findById(1)).thenReturn(Optional.empty());
 
-    private List<TypeDto> getTypeDtoList() {
-        return List.of(
-                new TypeDto(1, "Pressure"),
-                new TypeDto(2, "Voltage"),
-                new TypeDto(3, "Temperature")
-        );
-    }
+            assertThrows(ResourceNotFoundException.class, () -> typeService.findById(1));
 
+            verify(typeRepository, times(1)).findById(1);
+        }
+        @Test
+        void deleteTypeById() {
+            when(typeRepository.findById(1)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class, () -> typeService.deleteTypeById(1));
+
+            verify(typeRepository, times(1)).findById(1);
+        }
+    }
 }

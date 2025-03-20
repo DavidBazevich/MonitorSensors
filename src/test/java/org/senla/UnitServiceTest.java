@@ -1,5 +1,7 @@
 package org.senla;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,14 +11,15 @@ import org.senla.dto.UnitDto;
 import org.senla.dto.creators.UnitCreateDto;
 import org.senla.dto.mapper.UnitMapper;
 import org.senla.entity.Units;
+import org.senla.exception.ResourceNotFoundException;
 import org.senla.repository.UnitRepository;
 import org.senla.service.UnitService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,98 +29,123 @@ public class UnitServiceTest {
     private UnitRepository unitRepository;
     @Mock
     private UnitMapper unitMapper;
+
     @InjectMocks
     private UnitService unitService;
 
+    private Units unit;
+    private UnitDto unitDto;
+    private UnitCreateDto unitCreateDto;
 
-    @Test
-    void saveUnitTest() {
-        when(unitMapper.toUnit(getUnitCreateDto())).thenReturn(getUnit());
-        when(unitRepository.save(getUnit())).thenReturn(getUnit());
-        when(unitMapper.toUnitDto(getUnit())).thenReturn(getUnitDto());
+    @BeforeEach
+    void setUp() {
+        unit = new Units();
+        unit.setId(1);
+        unit.setName("bar");
 
-        UnitDto result = unitService.saveUnit(getUnitCreateDto());
-        assertEquals(getUnitDto(), result);
+        unitDto = new UnitDto(1, "bar");
+
+        unitCreateDto = new UnitCreateDto("bar");
     }
 
     @Test
-    void saveUnitTest_ThrowsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> {
-            unitService.saveUnit(getUnitCreateDto());
-        });
+    void findAllTypes() {
+        when(unitRepository.findAll()).thenReturn(Collections.singletonList(unit));
+        when(unitMapper.toUnitDto(unit)).thenReturn(unitDto);
+
+        List<UnitDto> result = unitService.findAllUnits();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(unitDto, result.get(0));
+
+        verify(unitRepository, times(1)).findAll();
+        verify(unitMapper, times(1)).toUnitDto(unit);
     }
 
     @Test
-    void updateUnitTest() {  // FAIL
-        int id = 1;
-        UnitCreateDto newUnit = new UnitCreateDto("voltage");
-        when(unitRepository.findById(id)).thenReturn(Optional.ofNullable(getUnit()));
-        when(unitRepository.save(getUnit())).thenReturn(getUnit());
-        when(unitMapper.toUnitDto(getUnit())).thenReturn(getUnitDto());
+    void saveType() {
+        when(unitMapper.toUnit(unitCreateDto)).thenReturn(unit);
+        when(unitRepository.save(unit)).thenReturn(unit);
+        when(unitMapper.toUnitDto(unit)).thenReturn(unitDto);
 
-        UnitDto result = unitService.updateUnit(id, newUnit);
-        assertEquals(UnitDto.builder().id(1).name("voltage").build(), result);
+        UnitDto result = unitService.saveUnit(unitCreateDto);
+
+        assertNotNull(result);
+        assertEquals(unitDto, result);
+
+        verify(unitMapper, times(1)).toUnit(unitCreateDto);
+        verify(unitRepository, times(1)).save(unit);
+        verify(unitMapper, times(1)).toUnitDto(unit);
     }
 
     @Test
-    void findUnitByIdTest() {
-        int id = 1;
-        when(unitMapper.toUnitDto(getUnit())).thenReturn(getUnitDto());
-        when(unitRepository.findById(id)).thenReturn(Optional.ofNullable(getUnit()));
+    void updateType() {
+        when(unitRepository.findById(1)).thenReturn(Optional.of(unit));
+        when(unitRepository.save(unit)).thenReturn(unit);
+        when(unitMapper.toUnitDto(unit)).thenReturn(unitDto);
 
-        UnitDto result = unitService.findById(id);
-        assertEquals(result, getUnitDto());
+        UnitDto result = unitService.updateUnit(1, unitCreateDto);
+
+        assertNotNull(result);
+        assertEquals(unitDto, result);
+
+        verify(unitRepository, times(1)).findById(1);
+        verify(unitRepository, times(1)).save(unit);
+        verify(unitMapper, times(1)).toUnitDto(unit);
     }
 
     @Test
-    void findAllUnitsTest() {  //FAIL
-        when(unitMapper.toUnitDto(getUnit())).thenReturn(getUnitDto());
-        when(unitRepository.findAll()).thenReturn(getUnitList());
+    void findById() {
+        when(unitRepository.findById(1)).thenReturn(Optional.of(unit));
+        when(unitMapper.toUnitDto(unit)).thenReturn(unitDto);
 
-        var result = unitService.findAllUnits();
-        assertEquals(getUnitDtoList(), result);
+        UnitDto result = unitService.findById(1);
+
+        assertNotNull(result);
+        assertEquals(unitDto, result);
+
+        verify(unitRepository, times(1)).findById(1);
+        verify(unitMapper, times(1)).toUnitDto(unit);
     }
 
     @Test
-    void deleteUnitByIdTest(){ //Работает но при смене id на другую цифру тоже самое срабатывает
-        int id = 1;
-        when(unitRepository.findById(id)).thenReturn(Optional.ofNullable(getUnit()));
+    void deleteTypeById() {
+        when(unitRepository.findById(1)).thenReturn(Optional.of(unit));
 
-        unitService.deleteUnitById(id);
+        unitService.deleteUnitById(1);
 
-        verify(unitRepository, times(1)).findById(id);
-        verify(unitRepository, times(1)).delete(getUnit());
+        verify(unitRepository, times(1)).findById(1);
+        verify(unitRepository, times(1)).delete(unit);
     }
 
-    private UnitCreateDto getUnitCreateDto() {
-        return new UnitCreateDto("bar");
-    }
+    @Nested
+    class TypeResourceNotFoundExceptionTests{
+        @Test
+        void updateType() {
+            when(unitRepository.findById(1)).thenReturn(Optional.empty());
 
-    private Units getUnit() {
-        return Units.builder()
-                .id(1)
-                .name("bar")
-                .build();
-    }
+            assertThrows(ResourceNotFoundException.class, () -> unitService.updateUnit(1, unitCreateDto));
 
-    private UnitDto getUnitDto() {
-        return new UnitDto(1, "bar");
-    }
+            verify(unitRepository, times(1)).findById(1);
+        }
 
-    private List<Units> getUnitList() {
-        return List.of(
-                Units.builder().id(1).name("bar").build(),
-                Units.builder().id(2).name("voltage").build(),
-                Units.builder().id(3).name("degree Celsius").build()
-        );
-    }
+        @Test
+        void findById() {
+            when(unitRepository.findById(1)).thenReturn(Optional.empty());
 
-    private List<UnitDto> getUnitDtoList() {
-        return List.of(
-                new UnitDto(1, "bar"),
-                new UnitDto(2, "voltage"),
-                new UnitDto(3, "degree Celsius")
-        );
+            assertThrows(ResourceNotFoundException.class, () -> unitService.findById(1));
+
+            verify(unitRepository, times(1)).findById(1);
+        }
+        @Test
+        void deleteTypeById() {
+            when(unitRepository.findById(1)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class, () -> unitService.deleteUnitById(1));
+
+            verify(unitRepository, times(1)).findById(1);
+        }
     }
 
 }
