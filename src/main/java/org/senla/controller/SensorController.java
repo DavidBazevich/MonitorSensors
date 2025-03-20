@@ -39,10 +39,11 @@ public class SensorController {
         return new ResponseEntity<>(sensorService.saveSensor(sensor), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{name}")
-    public ResponseEntity<SensorDto> updateSensor(@PathVariable String name,
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('admin:update')")
+    public ResponseEntity<SensorDto> updateSensor(@PathVariable Integer id,
                                               @RequestBody SensorCreateDto newSensor){
-        return ResponseEntity.ok(sensorService.updateSensor(name, newSensor));
+        return ResponseEntity.ok(sensorService.updateSensor(id, newSensor));
     }
 
     @DeleteMapping("/{id}")

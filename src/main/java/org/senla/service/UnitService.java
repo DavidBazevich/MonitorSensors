@@ -42,9 +42,9 @@ public class UnitService implements UnitServiceImp {
 
     @Override
     @Transactional
-    public UnitDto updateUnit(String name, UnitCreateDto newUnit){ //TODO update
-        Units unit = unitRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found with name: " + name));
+    public UnitDto updateUnit(Integer id, UnitCreateDto newUnit){
+        Units unit = unitRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found with id: " + id));
         unit.setName(newUnit.getName());
         unitRepository.save(unit);
         return unitMapper.toUnitDto(unit);
@@ -59,11 +59,10 @@ public class UnitService implements UnitServiceImp {
 
     @Override
     @Transactional
-    public UnitDto deleteUnitByName(String name) {
-        Units unit = unitRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found with name: " + name));
+    public void deleteUnitById(Integer id) {
+        Units unit = unitRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found with id: " + id));
         unitRepository.delete(unit);
-        return unitMapper.toUnitDto(unit);
     }
 
     private Units createType(UnitCreateDto unitCreateDto){

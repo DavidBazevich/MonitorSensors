@@ -8,7 +8,7 @@ import java.util.List;
 public interface TypeServiceImp {
     List<TypeDto> findAllTypes();
     TypeDto saveType(TypeCreateDto type);
-    TypeDto updateType(String name, TypeCreateDto type);
+    TypeDto updateType(Integer id, TypeCreateDto type);
     TypeDto findById(Integer id);
-    TypeDto deleteTypeByName(String name);
+    void deleteTypeById(Integer id);
 }

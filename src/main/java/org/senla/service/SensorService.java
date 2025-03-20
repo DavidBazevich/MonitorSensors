@@ -49,7 +49,7 @@ public class SensorService implements SensorServiceImp {
 
     @Override
     @Transactional
-    public SensorDto updateSensor(String name, SensorCreateDto newSensor){
+    public SensorDto updateSensor(Integer id, SensorCreateDto newSensor){
         Units unit = null;
         Type type = typeRepository.findByName(newSensor.getType())
                 .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + newSensor.getType()));
@@ -57,8 +57,8 @@ public class SensorService implements SensorServiceImp {
             unit = unitRepository.findByName(newSensor.getUnit())
                     .orElseThrow(() -> new ResourceNotFoundException("Unit not found with name: " + newSensor.getUnit()));
         }
-        Sensor sensor = sensorsRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with name: " + name));
+        Sensor sensor = sensorsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with id: " + id));
         sensor.setName(newSensor.getName());
         sensor.setModel(newSensor.getModel());
         sensor.setRange(newSensor.getRange());
@@ -77,14 +77,12 @@ public class SensorService implements SensorServiceImp {
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with id: " + id));
     }
 
-
     @Override
     @Transactional
-    public SensorDto deleteSensorById(Integer id) {
+    public void deleteSensorById(Integer id) {
         Sensor sensor = sensorsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with id: " + id));
-        sensorsRepository.deleteById(id);
-        return sensorMapper.toSensorDto(sensor);
+        sensorsRepository.delete(sensor);
     }
 
     private Sensor createSensor(SensorCreateDto sensorCreateDto) {

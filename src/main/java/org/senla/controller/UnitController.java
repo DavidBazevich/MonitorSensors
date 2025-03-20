@@ -36,15 +36,15 @@ public class UnitController {
         return new ResponseEntity<>(unitService.saveUnit(unit), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{name}")
-    public ResponseEntity<UnitDto> updateUnit(@PathVariable String name,
+    @PutMapping("/{id}")
+    public ResponseEntity<UnitDto> updateUnit(@PathVariable Integer id,
                                               @RequestBody UnitCreateDto newUnit){
-       return ResponseEntity.ok(unitService.updateUnit(name, newUnit));
+       return ResponseEntity.ok(unitService.updateUnit(id, newUnit));
     }
 
-    @DeleteMapping("/{name}")
-    public ResponseEntity<Void> deleteUnit(@PathVariable String name){
-        unitService.deleteUnitByName(name);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUnit(@PathVariable Integer id){
+        unitService.deleteUnitById(id);
         return ResponseEntity.noContent().build();
     }
 

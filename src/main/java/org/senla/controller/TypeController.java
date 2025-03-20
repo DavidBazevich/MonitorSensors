@@ -36,15 +36,15 @@ public class TypeController {
         return new ResponseEntity<>(typeService.saveType(type), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{name}")
-    public ResponseEntity<TypeDto> updateUnit(@PathVariable String name,
+    @PutMapping("/{id}")
+    public ResponseEntity<TypeDto> updateUnit(@PathVariable Integer id,      //todo change to id
                                               @RequestBody TypeCreateDto newType){
-        return ResponseEntity.ok(typeService.updateType(name, newType));
+        return ResponseEntity.ok(typeService.updateType(id, newType));
     }
 
-    @DeleteMapping("/{name}")
-    public ResponseEntity<Void> deleteType(@PathVariable String name){
-        typeService.deleteTypeByName(name);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteType(@PathVariable Integer id){
+        typeService.deleteTypeById(id);
         return ResponseEntity.noContent().build();
     }
 

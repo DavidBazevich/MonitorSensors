@@ -41,7 +41,7 @@ public class SecurityConfiguration {
                         .requestMatchers( "/api/v1/type", "/api/v1/unit").hasRole(ADMIN.name())
                         .requestMatchers("/api/v1/sensor").hasAnyRole(ADMIN.name(), VIEWER.name())
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest()                         //todo Tests
+                        .anyRequest()
                         .authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement

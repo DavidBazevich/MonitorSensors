@@ -37,14 +37,14 @@ public class TypeService implements TypeServiceImp {
         return Optional.of(createType(type))
                 .map(typeRepository::save)
                 .map(typeMapper::toTypeDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Incorrect data"));
+                .orElseThrow();
     }
 
     @Override
     @Transactional
-    public TypeDto updateType(String name, TypeCreateDto newType){
-        Type type = typeRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + name));
+    public TypeDto updateType(Integer id, TypeCreateDto newType){
+        Type type = typeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Type not found with id: " + id));
         type.setName(newType.getName());
         typeRepository.save(type);
         return typeMapper.toTypeDto(type);
@@ -59,11 +59,10 @@ public class TypeService implements TypeServiceImp {
 
     @Override
     @Transactional
-    public TypeDto deleteTypeByName(String name) {
-        Type type = typeRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Type not found with name: " + name));
+    public void deleteTypeById(Integer id) {
+        Type type = typeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Type not found with id: " + id));
         typeRepository.delete(type);
-        return typeMapper.toTypeDto(type);
     }
 
     private Type createType(TypeCreateDto typeCreateDto){
