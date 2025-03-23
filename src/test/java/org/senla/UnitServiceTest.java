@@ -1,6 +1,7 @@
 package org.senla;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Тесты для UnitService")
 public class UnitServiceTest {
 
     @Mock
@@ -120,6 +122,7 @@ public class UnitServiceTest {
     }
 
     @Nested
+    @DisplayName("Проброс исключений")
     class TypeResourceNotFoundExceptionTests{
         @Test
         void updateType() {

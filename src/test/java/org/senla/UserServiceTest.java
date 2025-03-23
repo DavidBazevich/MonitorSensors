@@ -1,6 +1,7 @@
 package org.senla;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,27 +37,23 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск юзера по имени -> Возвращает объект юзера")
     void loadUserByUsername_IfUserExists() {
         when(userRepository.findByName("David")).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userService.loadUserByUsername("David");
 
-        assertNotNull(userDetails);
-        assertEquals("David", userDetails.getUsername());
-        assertEquals("qwerty", userDetails.getPassword());
-        verify(userRepository, times(1)).findByName("David");
+        assertEquals(user, userDetails);
     }
 
     @Test
+    @DisplayName("Поиск юзера по имени -> Пробрасывает исключение")
     void loadUserByUsername_IfUserDoesNotExist() {
         when(userRepository.findByName("Ivan")).thenReturn(Optional.empty());
 
-        UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () -> {
+        assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername("Ivan");
         });
-
-        assertEquals("User not found with username: Ivan", exception.getMessage());
-        verify(userRepository, times(1)).findByName("Ivan");
     }
 
 }

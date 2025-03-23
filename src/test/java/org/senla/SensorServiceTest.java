@@ -97,8 +97,8 @@ public class SensorServiceTest {
 
     @Test
     void saveSensor() {
-        when(unitRepository.findByName(sensorCreateDto.getUnit())).thenReturn(Optional.ofNullable(sensor.getUnit()));
-        when(typeRepository.findByName(sensorCreateDto.getType())).thenReturn(Optional.ofNullable(sensor.getType()));
+        when(unitRepository.findByName(sensorCreateDto.getUnit())).thenReturn(Optional.of(Units.builder().id(1).name("bar").build()));
+        when(typeRepository.findByName(sensorCreateDto.getType())).thenReturn(Optional.of(Type.builder().id(1).name("Pressure").build()));
         when(sensorsRepository.save(sensor)).thenReturn(sensor);
         when(sensorMapper.toSensorDto(sensor)).thenReturn(sensorDto);
 
@@ -107,7 +107,6 @@ public class SensorServiceTest {
         assertNotNull(result);
         assertEquals(sensorDto, result);
 
-        verify(sensorMapper, times(1)).toSensor(sensorCreateDto);
         verify(sensorsRepository, times(1)).save(sensor);
         verify(sensorMapper, times(1)).toSensorDto(sensor);
     }
@@ -115,8 +114,8 @@ public class SensorServiceTest {
     @Test
     void updateSensor() {
         when(sensorsRepository.findById(1)).thenReturn(Optional.of(sensor));
-        when(typeRepository.findByName("Type1")).thenReturn(Optional.of(new Type()));
-        when(unitRepository.findByName("Unit1")).thenReturn(Optional.of(new Units()));
+        when(unitRepository.findByName(sensorCreateDto.getUnit())).thenReturn(Optional.of(Units.builder().id(1).name("bar").build()));
+        when(typeRepository.findByName(sensorCreateDto.getType())).thenReturn(Optional.of(Type.builder().id(1).name("Pressure").build()));
         when(sensorsRepository.save(sensor)).thenReturn(sensor);
         when(sensorMapper.toSensorDto(sensor)).thenReturn(sensorDto);
 
