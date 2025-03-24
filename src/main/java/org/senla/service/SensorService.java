@@ -39,7 +39,7 @@ public class SensorService implements SensorServiceImp {
     @Override
     @Transactional
     public SensorDto saveSensor(SensorCreateDto sensorCreatedDto) {
-       return Optional.of(createSensor(sensorCreatedDto))
+       return Optional.of(updateSensorFields(new Sensor(), sensorCreatedDto))
                .map(sensorsRepository::save)
                .map(sensorMapper::toSensorDto)
                .orElseThrow(() -> new ResourceNotFoundException("Incorrect data"));
@@ -69,10 +69,6 @@ public class SensorService implements SensorServiceImp {
     private Sensor getSensorById(Integer id) {
         return sensorsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor not found with id: " + id));
-    }
-
-    private Sensor createSensor(SensorCreateDto sensorCreateDto) {
-        return updateSensorFields(new Sensor(), sensorCreateDto);
     }
 
     private Sensor updateSensorFields(Sensor sensor, SensorCreateDto newSensor) {

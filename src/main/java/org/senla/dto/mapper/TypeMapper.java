@@ -12,5 +12,7 @@ public interface TypeMapper {
     @Mapping(source = "name", target = "name")
     TypeDto toTypeDto(Type type);
     @Mapping(source = "name", target = "name")
+    @Mapping(target = "sensorsList", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Type toType(TypeCreateDto typeCreateDto);
 }

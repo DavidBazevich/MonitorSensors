@@ -17,6 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"id", "name"})
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)

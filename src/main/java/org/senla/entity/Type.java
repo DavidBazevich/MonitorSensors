@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"id", "sensorsList"})
 @Builder
 @Entity
 @Table(name = "type")

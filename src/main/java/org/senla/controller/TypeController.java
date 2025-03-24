@@ -37,7 +37,7 @@ public class TypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TypeDto> updateUnit(@PathVariable Integer id,      //todo change to id
+    public ResponseEntity<TypeDto> updateUnit(@PathVariable Integer id,
                                               @RequestBody TypeCreateDto newType){
         return ResponseEntity.ok(typeService.updateType(id, newType));
     }

@@ -30,6 +30,7 @@ public class AuthService implements AuthServiceImpl {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final ObjectMapper objectMapper;
 
     @Override
     public AuthResponse register(RegisterRequest registerRequest) {
@@ -109,7 +110,7 @@ public class AuthService implements AuthServiceImpl {
                        .accessToken(accessToken)
                        .refreshToken(refreshToken)
                        .build();
-               new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+               objectMapper.writeValue(response.getOutputStream(), authResponse);
             }
         }
     }
