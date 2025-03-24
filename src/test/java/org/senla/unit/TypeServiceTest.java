@@ -1,4 +1,4 @@
-package org.senla;
+package org.senla.unit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TypeServiceTest {  //TODO add integration and unit tests(for auth, reg, logout), Docker Compose
+public class TypeServiceTest {  //TODO add integration, Docker Compose
 
     @Mock
     private TypeRepository typeRepository;
