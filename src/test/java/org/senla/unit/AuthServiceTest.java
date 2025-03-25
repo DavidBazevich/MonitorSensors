@@ -16,9 +16,11 @@ import org.senla.dto.RegisterRequest;
 import org.senla.entity.Role;
 import org.senla.entity.User;
 import org.senla.filter.JwtService;
+import org.senla.repository.TokenRepository;
 import org.senla.repository.UserRepository;
 import org.senla.service.AuthService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
@@ -34,6 +36,9 @@ public class AuthServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private TokenRepository tokenRepository;
+
+    @Mock
     private ObjectMapper objectMapper;
     @Mock
     private JwtService jwtService;
@@ -41,6 +46,8 @@ public class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private ServletOutputStream outputStream;
+    @Mock
+    private AuthenticationManager authenticationManager;
 
     @InjectMocks
     private AuthService authService;
