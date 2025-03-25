@@ -1,7 +1,10 @@
 package org.senla.repository;
 
-import org.senla.entity.Sensors;
-import org.springframework.data.repository.Repository;
+import org.senla.entity.Sensor;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class SensorsRepository implements Repository<Sensors, Long> {
+import java.util.Optional;
+
+public interface SensorsRepository extends JpaRepository<Sensor, Integer> {
+    Optional<Sensor> findByName(String name);
 }
